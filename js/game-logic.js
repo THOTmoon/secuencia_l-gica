@@ -482,36 +482,59 @@ class GameLogic {
             posicion.className = 'posicion-secuencia';
             posicion.dataset.index = index;
             
-            if (posicionData.item) {
-                const item = posicionData.item;
-                const img = document.createElement('img');
-                
-                // ADAPTACIÓN: Solo imagen vertical
-                img.src = `assets/img/${item.imagen}`;
-                img.className = 'pictograma-secuencia';
-                
-                if (posicionData.isCorrect) {
-                    img.dataset.isCorrect = "true";
-                }
-                
-                img.alt = item.descripcion;
-                img.draggable = false;
-                posicion.appendChild(img);
-                
-                const botonQuitar = document.createElement('button');
-                botonQuitar.textContent = '×';
-                botonQuitar.className = 'boton-quitar';
-                botonQuitar.onclick = () => this.quitarPictograma(index);
-                
-                if (posicionData.isCorrect) {
-                    botonQuitar.style.display = 'none';
-                }
-                posicion.appendChild(botonQuitar);
-
-            } else {
-                posicion.classList.add('posicion-vacia');
-                posicion.textContent = `Paso ${index + 1}`;
+                    if (posicionData.item) {
+            const item = posicionData.item;
+            const img = document.createElement('img');
+            
+            // ADAPTACIÓN: Solo imagen vertical
+            img.src = `assets/img/${item.imagen}`;
+            img.className = 'pictograma-secuencia';
+            
+            if (posicionData.isCorrect) {
+                img.dataset.isCorrect = "true";
             }
+            
+            img.alt = item.descripcion;
+            img.draggable = false;
+            posicion.appendChild(img);
+            
+            // BOTÓN QUITAR CON SOPORTE TÁCTIL
+            const botonQuitar = document.createElement('button');
+            botonQuitar.textContent = '×';
+            botonQuitar.className = 'boton-quitar';
+        
+            // Evento para mouse (desktop)
+            botonQuitar.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.quitarPictograma(index);
+            });
+        
+            // Evento para touch (móviles)
+            botonQuitar.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.quitarPictograma(index);
+            });
+        
+            // Prevenir arrastre accidental del botón
+            botonQuitar.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            });
+        
+            botonQuitar.addEventListener('touchmove', (e) => {
+                e.stopPropagation();
+            });
+        
+            if (posicionData.isCorrect) {
+                botonQuitar.style.display = 'none';
+            }
+            posicion.appendChild(botonQuitar);
+        
+        } else {
+            posicion.classList.add('posicion-vacia');
+            posicion.textContent = `Paso ${index + 1}`;
+        }
             
             posicion.addEventListener('dragover', this.onDragOver);
             posicion.addEventListener('drop', (e) => this.onDrop(e, index));
@@ -1162,5 +1185,6 @@ class GameLogic {
         if (this.timerInactividad) clearTimeout(this.timerInactividad);
     }
 }
+
 
 window.GameLogic = GameLogic;
