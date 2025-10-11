@@ -370,7 +370,7 @@ class GameLogic {
         }
     ],
     "configuracion": {
-        "tiempoInactividadMs": 20000,
+        "tiempoInactividadMs": 60000,
         "maxIntentos": 10
     }
 };
@@ -1188,3 +1188,4 @@ class GameLogic {
 
 
 window.GameLogic = GameLogic;
+
