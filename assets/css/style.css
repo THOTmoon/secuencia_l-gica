@@ -30,10 +30,12 @@ body {
   color: #fff;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column; /* NUEVO: Establece el eje principal verticalmente */
+  justify-content: flex-start; /* MODIFICADO: Alinea el contenido desde el inicio (la parte superior) */
+  align-items: center; /* MANTENIDO: Sigue centrando horizontalmente el contenedor principal */
   padding: 10px;
   overflow-x: hidden;
+  overflow-y: auto; /* NUEVO: Permite el desplazamiento vertical si el contenido es más alto que la pantalla */
 }
 /* --- Estilos Pantalla de Inicio (Splash) --- */
 #pantalla-inicio {
@@ -378,7 +380,7 @@ body {
    MONEDAS (contador)
    ====================================================== */
 #monedas-container {
-  position: absolute;
+  position: fixed; /* CAMBIADO: Fija la posición en el viewport */
   top: 10px;
   right: 18px;
   display: flex;
@@ -1029,4 +1031,5 @@ body {
 
 .contenedor-secuencia {
     touch-action: pan-y;
+
 }
