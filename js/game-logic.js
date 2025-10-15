@@ -566,39 +566,45 @@ class GameLogic {
             return;
         }
 
-        opcionesDisponibles.forEach((opcion, index) => {
-            const opcionElement = document.createElement('div');
-            opcionElement.className = `opcion-carrusel ${index === 0 ? 'activa' : ''}`;
-            opcionElement.dataset.id = opcion.id;
-            opcionElement.draggable = true;
-
-            const img = document.createElement('img');
-            // ADAPTACIÓN: Solo imagen vertical (misma que arriba)
-            img.src = `assets/img/${opcion.imagen}`;
-            img.alt = opcion.descripcion;
-            img.className = 'pictograma-opcion';
-            opcionElement.appendChild(img);
-
-            // NO agregar texto de descripción
+            opcionesDisponibles.forEach((opcion, index) => {
+        const opcionElement = document.createElement('div');
+        opcionElement.className = `opcion-carrusel ${index === 0 ? 'activa' : ''}`;
+        opcionElement.dataset.id = opcion.id;
+        opcionElement.draggable = true;
+    
+        const img = document.createElement('img');
+        img.src = `assets/img/${opcion.imagen}`;
+        img.alt = opcion.descripcion;
+        img.className = 'pictograma-opcion';
+        opcionElement.appendChild(img);
+    
+        // SOLO LA OPCIÓN ACTIVA ES INTERACTUABLE
+        if (index === 0) {
             // Eventos para mouse
             opcionElement.addEventListener('dragstart', (e) => this.onDragStart(e, opcion));
             // Eventos para tactil
             opcionElement.addEventListener('touchstart', (e) => this.handleTouchStart(e, opcion));
             opcionElement.addEventListener('touchmove', (e) => this.handleTouchMove(e));
-            opcionElement.addEventListener('touchend', (e) => this.handleTap(e, opcion)); // Toque simple
+            opcionElement.addEventListener('touchend', (e) => this.handleTap(e, opcion));
             opcionElement.addEventListener('touchcancel', () => this.resetTouchState());
-
-            opcionElement.addEventListener('click', () => this.activarOpcion(index));
-
-            carruselInner.appendChild(opcionElement);
-
-            if (indicadores) {
-                const indicador = document.createElement('div');
-                indicador.className = `indicador ${index === 0 ? 'activo' : ''}`;
-                indicador.addEventListener('click', () => this.activarOpcion(index));
-                indicadores.appendChild(indicador);
-            }
-        });
+        } else {
+            // Opciones no activas - no interactuables
+            opcionElement.style.pointerEvents = 'none';
+            opcionElement.style.opacity = '0.6';
+            opcionElement.draggable = false;
+        }
+    
+        opcionElement.addEventListener('click', () => this.activarOpcion(index));
+    
+        carruselInner.appendChild(opcionElement);
+    
+        if (indicadores) {
+            const indicador = document.createElement('div');
+            indicador.className = `indicador ${index === 0 ? 'activo' : ''}`;
+            indicador.addEventListener('click', () => this.activarOpcion(index));
+            indicadores.appendChild(indicador);
+        }
+    });
 
         this.actualizarNavegacionCarrusel();
         this.activarOpcion(0);
@@ -607,17 +613,24 @@ class GameLogic {
     /**
      * MÉTODO DE CENTRADO DEL CÓDIGO DE REFERENCIA - FUNCIONA CORRECTAMENTE
      */
-    activarOpcion(index) {
+        activarOpcion(index) {
         const opciones = document.querySelectorAll('.opcion-carrusel');
         const indicadores = document.querySelectorAll('.indicador');
-        if (index < 0 || index >= opciones.length) return;
-
-        // 1. Actualizar clases visuales (activa)
+        
         opciones.forEach((op, i) => {
-            op.classList.toggle('activa', i === index);
-        });
-        indicadores.forEach((ind, i) => {
-            ind.classList.toggle('activo', i === index);
+            const isActive = i === index;
+            op.classList.toggle('activa', isActive);
+            
+            // Actualizar interactividad
+            if (isActive) {
+                op.style.pointerEvents = 'auto';
+                op.style.opacity = '1';
+                op.draggable = true;
+            } else {
+                op.style.pointerEvents = 'none';
+                op.style.opacity = '0.6';
+                op.draggable = false;
+            }
         });
 
         // 2. Centrar la opción activa en el contenedor visible del carrusel
@@ -1188,4 +1201,5 @@ class GameLogic {
 
 
 window.GameLogic = GameLogic;
+
 
