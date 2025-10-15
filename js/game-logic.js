@@ -548,67 +548,67 @@ class GameLogic {
     /**
      * Renderiza el carrusel de opciones - ADAPTADO del código de referencia
      */
-    renderizarCarrusel() {
-        const carruselInner = document.querySelector('.carrusel-inner');
-        const indicadores = document.querySelector('.indicadores-carrusel');
-        
-        if (!carruselInner) return;
-
-        carruselInner.innerHTML = '';
-        if (indicadores) indicadores.innerHTML = '';
-
-        const opcionesDisponibles = this.opciones.filter(opcion => !this.estaEnSecuencia(opcion.id));
-        
-        if (opcionesDisponibles.length === 0) {
-            carruselInner.innerHTML = '<p class="mensaje-carrusel">¡Secuencia completa!</p>';
+        renderizarCarrusel() {
+            const carruselInner = document.querySelector('.carrusel-inner');
+            const indicadores = document.querySelector('.indicadores-carrusel');
+            
+            if (!carruselInner) return;
+    
+            carruselInner.innerHTML = '';
             if (indicadores) indicadores.innerHTML = '';
-            this.actualizarNavegacionCarrusel(true);
-            return;
-        }
-
+    
+            const opcionesDisponibles = this.opciones.filter(opcion => !this.estaEnSecuencia(opcion.id));
+            
+            if (opcionesDisponibles.length === 0) {
+                carruselInner.innerHTML = '<p class="mensaje-carrusel">¡Secuencia completa!</p>';
+                if (indicadores) indicadores.innerHTML = '';
+                this.actualizarNavegacionCarrusel(true);
+                return;
+            }
+    
             opcionesDisponibles.forEach((opcion, index) => {
-        const opcionElement = document.createElement('div');
-        opcionElement.className = `opcion-carrusel ${index === 0 ? 'activa' : ''}`;
-        opcionElement.dataset.id = opcion.id;
-        opcionElement.draggable = true;
+                const opcionElement = document.createElement('div');
+                // La clase 'activa' se establece inicialmente en el índice 0, pero `activarOpcion(0)` lo recalculará
+                opcionElement.className = `opcion-carrusel ${index === 0 ? 'activa' : ''}`;
+                opcionElement.dataset.id = opcion.id;
+                opcionElement.draggable = true; // Se mantendrá true o false según `activarOpcion`
     
-        const img = document.createElement('img');
-        img.src = `assets/img/${opcion.imagen}`;
-        img.alt = opcion.descripcion;
-        img.className = 'pictograma-opcion';
-        opcionElement.appendChild(img);
+                const img = document.createElement('img');
+                img.src = `assets/img/${opcion.imagen}`;
+                img.alt = opcion.descripcion;
+                img.className = 'pictograma-opcion';
+                opcionElement.appendChild(img);
     
-        // SOLO LA OPCIÓN ACTIVA ES INTERACTUABLE
-        if (index === 0) {
-            // Eventos para mouse
-            opcionElement.addEventListener('dragstart', (e) => this.onDragStart(e, opcion));
-            // Eventos para tactil
-            opcionElement.addEventListener('touchstart', (e) => this.handleTouchStart(e, opcion));
-            opcionElement.addEventListener('touchmove', (e) => this.handleTouchMove(e));
-            opcionElement.addEventListener('touchend', (e) => this.handleTap(e, opcion));
-            opcionElement.addEventListener('touchcancel', () => this.resetTouchState());
-        } else {
-            // Opciones no activas - no interactuables
-            opcionElement.style.pointerEvents = 'none';
-            opcionElement.style.opacity = '0.6';
-            opcionElement.draggable = false;
+                // APLICAR TODOS LOS EVENTOS A TODAS LAS OPCIONES
+                // La función `activarOpcion` se encargará de habilitar/deshabilitar la interactividad
+                
+                // Eventos para mouse (Arrastre)
+                opcionElement.addEventListener('dragstart', (e) => this.onDragStart(e, opcion));
+                
+                // Eventos para tactil (Arrastre y Toque/Tap)
+                opcionElement.addEventListener('touchstart', (e) => this.handleTouchStart(e, opcion));
+                opcionElement.addEventListener('touchmove', (e) => this.handleTouchMove(e));
+                opcionElement.addEventListener('touchend', (e) => this.handleTap(e, opcion));
+                opcionElement.addEventListener('touchcancel', () => this.resetTouchState());
+                
+                // Evento para centrarla al hacer click
+                opcionElement.addEventListener('click', () => this.activarOpcion(index));
+    
+                carruselInner.appendChild(opcionElement);
+            
+                if (indicadores) {
+                    const indicador = document.createElement('div');
+                    indicador.className = `indicador ${index === 0 ? 'activo' : ''}`;
+                    indicador.addEventListener('click', () => this.activarOpcion(index));
+                    indicadores.appendChild(indicador);
+                }
+            });
+    
+            this.actualizarNavegacionCarrusel();
+            // Llamar a activarOpcion(0) para establecer el estado de interactividad correcto (pointerEvents, draggable)
+            // para la primera imagen y desactivar las demás.
+            this.activarOpcion(0);
         }
-    
-        opcionElement.addEventListener('click', () => this.activarOpcion(index));
-    
-        carruselInner.appendChild(opcionElement);
-    
-        if (indicadores) {
-            const indicador = document.createElement('div');
-            indicador.className = `indicador ${index === 0 ? 'activo' : ''}`;
-            indicador.addEventListener('click', () => this.activarOpcion(index));
-            indicadores.appendChild(indicador);
-        }
-    });
-
-        this.actualizarNavegacionCarrusel();
-        this.activarOpcion(0);
-    }
 
     /**
      * MÉTODO DE CENTRADO DEL CÓDIGO DE REFERENCIA - FUNCIONA CORRECTAMENTE
@@ -1201,5 +1201,6 @@ class GameLogic {
 
 
 window.GameLogic = GameLogic;
+
 
 
