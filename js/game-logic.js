@@ -386,7 +386,9 @@ class GameLogic {
         this.botonSiguiente = document.getElementById('boton-siguiente');
         this.botonReiniciar = document.getElementById('reiniciar');
         this.tituloNivelDisplay = document.getElementById('titulo-nivel');
-        
+        this.modalVictoria = document.getElementById('modal-victoria');
+        this.botonSiguienteModal = document.getElementById('boton-siguiente-modal');
+        this.nivelCompletadoModal = document.getElementById('nivel-completado-modal');
         // Configuración
         this.timerInactividad = null;
         this.tiempoInactividad = this.nivelesCompletos.configuracion.tiempoInactividadMs;
@@ -411,6 +413,19 @@ class GameLogic {
         if (this.botonReiniciar) {
             this.botonReiniciar.addEventListener('click', () => {
                 this.reiniciarNivel();
+            });
+        }
+
+        this.eventEmitter.on('nivel-completado', (nivel) => {
+            console.log(`Nivel ${nivel} completado`);
+        });
+    }
+
+     // NUEVO: Listener para el botón en el modal centrado
+        if (this.botonSiguienteModal) {
+            this.botonSiguienteModal.addEventListener('click', () => {
+                this.ocultarModalVictoria(); // Oculta el modal antes de cargar
+                this.cargarSiguienteNivel();
             });
         }
 
@@ -750,6 +765,7 @@ class GameLogic {
         }
     }
 
+
     /**
      * MÉTODOS PARA SOPORTE TÁCTIL EN MÓVILES
      */
@@ -834,6 +850,29 @@ class GameLogic {
         });
     }
 
+      mostrarModalVictoria() {
+            if (!this.modalVictoria) return;
+            
+            // 1. Asegura que el botón en el juego principal esté oculto
+            if (this.botonSiguiente) {
+                this.botonSiguiente.classList.add('hidden');
+            }
+            
+            // 2. Actualiza el nivel en el modal
+            if (this.nivelCompletadoModal) {
+                this.nivelCompletadoModal.textContent = this.nivelActual;
+            }
+    
+            // 3. Muestra el modal
+            this.modalVictoria.classList.add('visible');
+        }
+    
+        ocultarModalVictoria() {
+            if (this.modalVictoria) {
+                this.modalVictoria.classList.remove('visible');
+            }
+        }
+
     // Método para toque simple (alternativa al arrastre)
     handleTap(event, item) {
         event.preventDefault();
@@ -890,7 +929,7 @@ class GameLogic {
     }
 
     /**
-     * CORREGIDO: Manejo mejorado de la victoria
+     * CORREGIDO: Manejo mejorado de la victoria con Modal Centralizado
      */
     manejarVictoria() {
         this.posiciones.forEach(posData => {
@@ -904,10 +943,9 @@ class GameLogic {
         
         // Mensaje diferente si es el último nivel
         if (this.nivelActual < this.totalNiveles) {
-            this.mostrarMensaje('🎉 ¡Secuencia correcta! Nivel completado', 'exito');
-            if (this.botonSiguiente) {
-                this.botonSiguiente.classList.remove('hidden');
-            }
+            this.mostrarMensaje('🎉 ¡Secuencia correcta! Pulsa Siguiente Nivel', 'exito');
+            // Muestra el modal de victoria en el centro
+            this.mostrarModalVictoria(); 
         } else {
             this.mostrarMensaje('🎊 ¡Felicidades! Has completado todos los niveles', 'exito');
             this.mostrarPantallaFinal();
@@ -1201,6 +1239,7 @@ class GameLogic {
 
 
 window.GameLogic = GameLogic;
+
 
 
 
