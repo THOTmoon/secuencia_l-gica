@@ -385,7 +385,8 @@ class GameLogic {
         this.mensajeDisplay = document.getElementById('mensaje');
         this.botonSiguiente = document.getElementById('boton-siguiente');
         this.botonReiniciar = document.getElementById('reiniciar');
-        this.tituloNivelDisplay = document.getElementById('titulo-nivel');
+        // this.tituloNivelDisplay = document.getElementById('titulo-nivel');
+        this.tituloNivelDisplay = document.querySelector('#juego-principal h1'); // Usa querySelector si no tiene ID
         this.modalVictoria = document.getElementById('modal-victoria');
         this.botonSiguienteModal = document.getElementById('boton-siguiente-modal');
         this.nivelCompletadoModal = document.getElementById('nivel-completado-modal');
@@ -393,7 +394,12 @@ class GameLogic {
         this.timerInactividad = null;
         this.tiempoInactividad = this.nivelesCompletos.configuracion.tiempoInactividadMs;
         this.maxIntentos = this.nivelesCompletos.configuracion.maxIntentos;
-
+        // Referencias para el Modal de Victoria (NUEVO)
+        this.modalVictoria = document.getElementById('modal-victoria');
+        this.botonSiguienteModal = document.getElementById('boton-siguiente-modal');
+        this.nivelCompletadoModal = document.getElementById('nivel-completado-modal');
+        this.totalNivelesDisplay = document.getElementById('total-niveles'); // ¡NUEVO!
+        this.totalNiveles = this.nivelesCompletos.niveles.length;
         // Nuevas propiedades para soporte táctil
         this.touchStartX = 0;
         this.touchStartY = 0;
@@ -442,6 +448,7 @@ class GameLogic {
             this.nivelActual = nivel;
             
             if (this.nivelDisplay) this.nivelDisplay.textContent = nivel;
+            if (this.totalNivelesDisplay) this.totalNivelesDisplay.textContent = this.totalNiveles; // ¡NUEVO!
             if (this.descripcionDisplay) this.descripcionDisplay.textContent = this.nivelData.descripcion;
             if (this.tituloNivelDisplay) this.tituloNivelDisplay.textContent = this.nivelData.titulo;
             
@@ -1239,6 +1246,7 @@ class GameLogic {
 
 
 window.GameLogic = GameLogic;
+
 
 
 
